@@ -28,7 +28,7 @@ async fn main() -> Result<ExitCode, BoxError> {
 	// spawn a writer task, to collect the cargo-update results & save the output file
 	// we will join this task later
 	let writer_task = tokio::spawn(async move {
-		let mut file_contents = String::new();
+		let mut file_chunks = Vec::new();
 		let mut has_outdated = false;
 
 		while let Some((label, text)) = rx.recv().await {
@@ -50,13 +50,18 @@ async fn main() -> Result<ExitCode, BoxError> {
 				has_outdated = true;
 			}
 
-			file_contents.push_str(format!("{label}\n{text}\n").as_str());
+			file_chunks.push(format!("{label}\n{text}\n"));
 		}
 
 		if has_outdated {
 			// create/overwrite the output file on disk
 			let mut file = fs::File::create(output_path).await?;
-			file.write_all(file_contents.as_bytes()).await?;
+
+			file_chunks.sort();
+
+			for chunk in file_chunks {
+				file.write_all(chunk.as_bytes()).await?;
+			}
 		} else {
 			// delete the output file on disk
 			// we ignore some expected types of errors
