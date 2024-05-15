@@ -87,14 +87,14 @@ async fn main() -> Result<ExitCode, BoxError> {
 				// spawn the task and join it
 				tokio::spawn(async move {
 					// execute the call to cargo
-					let command_output = process::Command::new("cargo")
+					let command_result = process::Command::new("cargo")
 						.arg("outdated")
 						.arg("--root-deps-only")
 						.current_dir(source_path) // set the CWD to the project's dir
 						.output()
 						.await;
 
-					match command_output {
+					match command_result {
 						// send a tuple of the source label & message text
 						Ok(output) => tx.send((
 							source_label,
