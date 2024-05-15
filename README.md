@@ -10,7 +10,7 @@ everything is up-to-date or not. Similar to how `/run/reboot-required` behaves.
 
 ## Usage
 ```
-local-ci-cargo-outdated --config ~/rust/ci-outdated.toml --output ~/Desktop/outdated-rust
+local-ci-cargo-outdated --config ~/rust/ci-outdated.toml --output ~/Desktop/rust-outdated
 ```
 
 ## Automating via CRON
