@@ -1,5 +1,5 @@
 use crate::args::{get_args, AppArgs};
-use futures::{StreamExt, TryStreamExt};
+use futures_util::{stream, StreamExt, TryStreamExt};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::error::Error;
@@ -77,7 +77,7 @@ async fn main() -> Result<ExitCode, BoxError> {
 	});
 
 	// spawn a task for each source
-	futures::stream::iter(config.sources)
+	stream::iter(config.sources)
 		.map(Ok)
 		.try_for_each_concurrent(10, |(source_label, source_path)| {
 			// create a clone of the tx for each source/task
